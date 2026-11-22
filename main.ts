@@ -25,6 +25,13 @@ if ([...ENTRY].length > 280) {
   throw new Error(`entry is ${[...ENTRY].length} characters, over the 280 limit`);
 }
 
+// The gate also requires 1–280 characters and more than whitespace:
+// enforce the lower bound here too, so a bad edit fails loudly
+// instead of shipping an invalid entry.
+if ([...ENTRY].length < 1 || ENTRY.trim().length === 0) {
+  throw new Error('entry must be 1–280 non-whitespace characters');
+}
+
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, 'entry.txt'), ENTRY, 'utf8');
